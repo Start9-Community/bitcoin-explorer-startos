@@ -24,6 +24,9 @@ check-init:
 		start-cli init; \
 	fi
 
+check-ts:
+	@npm run check
+
 ingredients: $(INGREDIENTS)
 	@echo "Re-evaluating ingredients..."
 
@@ -31,7 +34,7 @@ ${PACKAGE_ID}.s9pk: $(INGREDIENTS) | check-deps check-init
 	@$(MAKE) --no-print-directory ingredients
 	start-cli s9pk pack
 
-javascript/index.js: $(shell git ls-files startos) tsconfig.json node_modules package.json
+javascript/index.js: $(shell find startos -name "*.ts") tsconfig.json node_modules package.json check-ts
 	npm run build
 
 assets:
