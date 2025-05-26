@@ -1,7 +1,6 @@
 import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
 import { uiPort } from './utils'
-import { manifest as btcManifest } from "bitcoind-startos/startos/manifest"
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   console.info('Starting BTC RPC Explorer')
@@ -16,18 +15,16 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     sdk.Mounts.of()
       .mountVolume({
         volumeId: 'main',
-        mountpoint: '/data',
-        subpath: null,
+        mountpoint: '/root/.config/btc-rpc-explorer.env',
+        subpath: ".env",
+        type: 'file',
         readonly: false,
-      }).mountDependency<
-        typeof btcManifest
-      >({
+      }).mountDependency({
         dependencyId: "bitcoind",
         volumeId: "main",
-        subpath: null,
-        // subpath: ".cookie",
-        // type: 'file',
-        mountpoint: `/btcd/`,
+        subpath: ".cookie",
+        type: 'file',
+        mountpoint: `/btcd/.cookie`,
         readonly: true
       })
     ,
