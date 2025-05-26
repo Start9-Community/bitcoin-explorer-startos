@@ -24,7 +24,7 @@ check-init:
 		start-cli init; \
 	fi
 
-check-ts:
+check-ts: node_modules
 	@npm run check
 
 ingredients: $(INGREDIENTS)
