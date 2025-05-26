@@ -1,6 +1,7 @@
 import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
 import { uiPort } from './utils'
+import { envFile } from './fileModels/_env'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   console.info('Starting BTC RPC Explorer')
@@ -8,6 +9,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const additionalChecks: T.HealthCheck[] = []
 
   const workdir = '/workspace'
+
+  await envFile.read().const(effects)
 
   const explorer = await sdk.SubContainer.of(
     effects,

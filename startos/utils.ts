@@ -10,3 +10,6 @@ export const defaultEnv = {
   BTCEXP_HOST: "0.0.0.0",
   BTCEXP_PORT: `${uiPort}`
 }
+
+export const boolToString =
+  (b: boolean) => b ? 'true' : 'false'
