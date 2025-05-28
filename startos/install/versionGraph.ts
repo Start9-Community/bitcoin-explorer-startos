@@ -13,7 +13,8 @@ export const versionGraph = VersionGraph.of({
       store.write(effects, {
         intensive: false,
         privacy: false,
-        rates: false
+        rates: false,
+        redis: false,
       })
     ])
   },

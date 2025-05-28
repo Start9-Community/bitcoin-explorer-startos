@@ -11,5 +11,7 @@ export const defaultEnv = {
   BTCEXP_PORT: `${uiPort}`
 }
 
+export const redisUrl = "redis://localhost:6379"
+
 export const boolToString =
   (b: boolean) => b ? 'true' : 'false'

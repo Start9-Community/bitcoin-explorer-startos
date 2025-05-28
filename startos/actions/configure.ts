@@ -2,7 +2,7 @@ import { sdk } from '../sdk'
 import { store } from '../fileModels/store.json'
 import { env } from 'process'
 import { envFile } from '../fileModels/_env'
-import { boolToString } from '../utils'
+import { boolToString, redisUrl } from '../utils'
 
 const { InputSpec, Value } = sdk
 
@@ -25,6 +25,11 @@ export const inputSpec = InputSpec.of({
       'Enable exchange-rate queries',
     default: false,
   }),
+  redis: Value.toggle({
+    name: 'Enable key-value store for tx caching',
+    description: null,
+    default: false,
+  }),
 })
 
 export const configure = sdk.Action.withInput(
@@ -45,20 +50,25 @@ export const configure = sdk.Action.withInput(
   async ({ effects }) => store.read().const(effects),
   // the execution function
   async ({ effects, input }) => {
+    let conf: Record<string, string | undefined> = {
+      BTCEXP_SLOW_DEVICE_MODE:
+        boolToString(!input.intensive),
+      BTCEXP_PRIVACY_MODE:
+        boolToString(input.privacy),
+      BTCEXP_NO_RATES:
+        boolToString(!input.rates),
+      BTCEXP_REDIS_URL:
+        input.redis ? redisUrl : undefined
+    }
+
     await Promise.all([
       store.merge(effects, {
         intensive: input.intensive,
         privacy: input.privacy,
-        rates: input.rates
+        rates: input.rates,
+        redis: input.redis,
       }),
-      envFile.merge(effects, {
-        BTCEXP_SLOW_DEVICE_MODE:
-          boolToString(!input.intensive),
-        BTCEXP_PRIVACY_MODE:
-          boolToString(input.privacy),
-        BTCEXP_NO_RATES:
-          boolToString(!input.rates),
-      })
+      envFile.merge(effects, conf)
     ])
   },
 )

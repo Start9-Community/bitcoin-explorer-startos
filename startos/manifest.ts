@@ -20,6 +20,11 @@ export const manifest = setupManifest({
         dockerBuild: {}
       },
     },
+    'valkey': {
+      source: {
+        dockerTag: 'valkey/valkey:alpine',
+      },
+    },
   },
   hardwareRequirements: {},
   alerts: {
