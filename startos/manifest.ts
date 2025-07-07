@@ -40,7 +40,7 @@ export const manifest = setupManifest({
       description: "Communicate with the Bitcoin Network",
       optional: false,
       s9pk:
-        "https://github.com/Start9Labs/bitcoind-startos/releases/download/v28.1.0.3-alpha.3/bitcoind.s9pk",
+        "https://github.com/aldum/bitcoind-startos/releases/download/knots-28.1.3-alpha.1/bitcoind.s9pk",
     },
   },
 })
