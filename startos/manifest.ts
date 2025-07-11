@@ -8,7 +8,8 @@ export const manifest = setupManifest({
   upstreamRepo: 'https://github.com/janoside/btc-rpc-explorer',
   supportSite: 'https://github.com/janoside/btc-rpc-explorer/issues',
   marketingSite: 'https://bitcoinexplorer.org/',
-  donationUrl: null,
+  donationUrl: 'https://donate.bitcoinexplorer.org',
+  docsUrl: 'https://github.com/janoside/btc-rpc-explorer/tree/master/docs',
   description: {
     short: 'Self-Hosted Bitcoin explorer for everyone',
     long: 'Self-Hosted Bitcoin explorer for everyone',
@@ -40,7 +41,7 @@ export const manifest = setupManifest({
       description: "Communicate with the Bitcoin Network",
       optional: false,
       s9pk:
-        "https://github.com/aldum/bitcoind-startos/releases/download/knots-28.1.3-alpha.1/bitcoind.s9pk",
+        "https://github.com/Start9Labs/bitcoind-startos/releases/download/v28.1.0.3-alpha.6/bitcoind.s9pk",
     },
   },
 })
