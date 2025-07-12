@@ -62,7 +62,7 @@ jobs:
           echo "package_id=${{ needs.BuildPackage.outputs.package_id }}"       >> $GITHUB_ENV
           echo "package_title=${{ needs.BuildPackage.outputs.package_title }}" >> $GITHUB_ENV
           export DEBIAN_FRONTEND=noninteractive
-          apt update && apt install -y xxhash
+          sudo apt update && sudo apt install -y xxhash
 
       - uses: actions/download-artifact@v4
         with:
