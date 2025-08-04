@@ -15,7 +15,7 @@ jobs:
       package_title: ${{ steps.save-out.outputs.package_title }}
     steps:
       - name: Prepare StartOS SDK
-        uses: aldum/start-sdk-action@v1.4.0
+        uses: start9labs/sdk@v2
 
       - name: Checkout services repository
         uses: actions/checkout@v4
