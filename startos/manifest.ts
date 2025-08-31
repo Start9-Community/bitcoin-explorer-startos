@@ -1,4 +1,17 @@
 import { setupManifest } from '@start9labs/start-sdk'
+import { SDKImageInputSpec } from '@start9labs/start-sdk/base/lib/types/ManifestTypes'
+
+const BUILD = process.env.BUILD || ''
+
+const architectures = (() => {
+  if (BUILD === 'x86_64' || BUILD === 'x86' || BUILD === 'x64') {
+    return ['x86_64']
+  } else if (BUILD === 'aarch64' || BUILD === 'arm' || BUILD === 'arm64') {
+    return ['aarch64']
+  } else {
+    return ['x86_64', 'aarch64']
+  }
+})()
 
 export const manifest = setupManifest({
   id: 'btc-rpc-explorer',
@@ -20,14 +33,19 @@ export const manifest = setupManifest({
       source: {
         dockerBuild: {}
       },
-    },
+      arch: architectures,
+    } as SDKImageInputSpec,
     'valkey': {
       source: {
         dockerTag: 'valkey/valkey:alpine',
       },
-    },
+      arch: architectures,
+    } as SDKImageInputSpec,
+  }
+  ,
+  hardwareRequirements: {
+    arch: architectures,
   },
-  hardwareRequirements: {},
   alerts: {
     install: null,
     update: null,
