@@ -22,7 +22,8 @@ export const manifest = setupManifest({
   supportSite: 'https://github.com/janoside/btc-rpc-explorer/issues',
   marketingSite: 'https://bitcoinexplorer.org/',
   donationUrl: 'https://donate.bitcoinexplorer.org',
-  docsUrl: 'https://github.com/janoside/btc-rpc-explorer/tree/master/docs',
+  docsUrl:
+    'https://github.com/aldum/btc-rpc-explorer-startos/blob/update/040/docs/instructions.md',
   description: {
     short: 'Self-Hosted Bitcoin explorer for everyone',
     long: 'Self-Hosted Bitcoin explorer for everyone',
