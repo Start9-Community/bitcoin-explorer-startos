@@ -3,7 +3,7 @@ import { redisUrl, uiPort } from './utils'
 import { envFile } from './fileModels/_env'
 import { ExecCommandOptions } from '@start9labs/start-sdk/package/lib/mainFn/Daemons'
 
-export const main = sdk.setupMain(async ({ effects, started }) => {
+export const main = sdk.setupMain(async ({ effects }) => {
   console.info('Starting BTC RPC Explorer')
 
   const workdir = '/workspace'
@@ -54,27 +54,26 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       "valkey",
     )
 
-    return sdk.Daemons.of(effects, started
-    ).addDaemon('valkey', {
-      subcontainer: valkey,
-      exec: { command: 'valkey-server' },
-      ready: {
-        display: null,
-        fn: () =>
-          sdk.healthCheck.checkPortListening(effects, 6379, {
-            successMessage: 'KV store is ready',
-            errorMessage: ''
-          }),
-      },
-      requires: [],
-    }).addDaemon('primary', {
-      ...primaryDaemonOptions,
-      requires: ['valkey'],
-    })
+    return sdk.Daemons.of(effects)
+      .addDaemon('valkey', {
+        subcontainer: valkey,
+        exec: { command: 'valkey-server' },
+        ready: {
+          display: null,
+          fn: () =>
+            sdk.healthCheck.checkPortListening(effects, 6379, {
+              successMessage: 'KV store is ready',
+              errorMessage: ''
+            }),
+        },
+        requires: [],
+      }).addDaemon('primary', {
+        ...primaryDaemonOptions,
+        requires: ['valkey'],
+      })
   } else {
-    return sdk.Daemons.of(effects,
-      started
-    ).addDaemon('primary', {
+    return sdk.Daemons.of(effects).addDaemon(
+      'primary', {
       ...primaryDaemonOptions,
       requires: [],
     })
