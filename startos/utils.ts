@@ -1,7 +1,8 @@
 
 export const uiPort = 3002
 
-const cookiePath = "/btcd/.cookie"
+export const btcPath = "/btcd"
+const cookiePath = `${btcPath}/.cookie`
 
 export const defaultEnv = {
   BTCEXP_BITCOIND_HOST: "bitcoind.startos",

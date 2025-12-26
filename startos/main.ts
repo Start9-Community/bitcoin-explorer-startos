@@ -1,5 +1,5 @@
 import { sdk } from './sdk'
-import { redisUrl, uiPort } from './utils'
+import { btcPath, redisUrl, uiPort } from './utils'
 import { envFile } from './fileModels/_env'
 import { ExecCommandOptions } from '@start9labs/start-sdk/package/lib/mainFn/Daemons'
 
@@ -23,9 +23,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
       }).mountDependency({
         dependencyId: "bitcoind",
         volumeId: "main",
-        subpath: ".cookie",
-        type: 'file',
-        mountpoint: `/btcd/.cookie`,
+        subpath: null,
+        mountpoint: btcPath,
         readonly: true
       })
     ,
