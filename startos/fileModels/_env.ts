@@ -1,5 +1,6 @@
 import { FileHelper, matches } from "@start9labs/start-sdk"
 import { defaultEnv, redisUrl } from "../utils"
+import { sdk } from "../sdk"
 
 const { object, literal, oneOf } = matches
 
@@ -52,7 +53,7 @@ const shape = object({
 
 export const envFile = FileHelper.env(
   {
-    volumeId: "main",
+    base: sdk.volumes.main,
     subpath: ".env"
   },
   shape,
