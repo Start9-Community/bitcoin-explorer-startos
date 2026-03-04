@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icon.png" alt="Bitcoin Explorer Logo" width="21%">
+  <img src="icon.svg" alt="Bitcoin Explorer Logo" width="21%">
 </p>
 
 # Bitcoin Explorer on StartOS

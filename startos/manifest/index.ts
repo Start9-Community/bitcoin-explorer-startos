@@ -33,7 +33,7 @@ export const manifest = setupManifest({
       optional: false,
       metadata: {
         title: 'Bitcoin',
-        icon: 'https://bitcoin.org/img/icons/opengraph.png',
+        icon: 'https://raw.githubusercontent.com/Start9Labs/bitcoin-core-startos/feec0b1dae42961a257948fe39b40caf8672fce1/dep-icon.svg',
       },
     },
   },
