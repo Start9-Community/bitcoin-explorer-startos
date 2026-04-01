@@ -68,6 +68,8 @@
 | Redis/caching      | Separate Redis setup required | Valkey included and managed automatically |
 | Configuration      | Edit `.env` file or CLI args  | Configure action in StartOS UI            |
 
+On first install, StartOS seeds the `.env` configuration file with default values (slow device mode on, privacy mode off, exchange rates off, Valkey caching enabled).
+
 **Key difference:** On StartOS, the Bitcoin Core connection is fully automatic — the explorer connects to `bitcoind.startos:8332` using cookie authentication from the mounted dependency volume.
 
 ---
@@ -139,9 +141,9 @@
 
 ## Dependencies
 
-| Dependency   | Required | Purpose                          |
-| ------------ | -------- | -------------------------------- |
-| Bitcoin Core | **Yes**  | Provides blockchain data via RPC |
+| Dependency   | Required | Version   | Purpose                          |
+| ------------ | -------- | --------- | -------------------------------- |
+| Bitcoin Core | **Yes**  | >= 28.3   | Provides blockchain data via RPC |
 
 The explorer requires Bitcoin Core with `server=1` enabled. StartOS automatically:
 
