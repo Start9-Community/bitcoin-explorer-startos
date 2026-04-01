@@ -6,7 +6,7 @@ export const manifest = setupManifest({
   title: 'Bitcoin Explorer',
   license: 'MIT',
   packageRepo:
-    'https://github.com/Start9Labs/bitcoin-explorer-startos/tree/update/040',
+    'https://github.com/Start9Labs/bitcoin-explorer-startos',
   upstreamRepo: 'https://github.com/janoside/btc-rpc-explorer',
   marketingUrl: 'https://bitcoinexplorer.org/',
   donationUrl: 'https://donate.bitcoinexplorer.org',
