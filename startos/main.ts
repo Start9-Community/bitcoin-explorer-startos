@@ -1,3 +1,4 @@
+import { manifest as bitcoinManifest } from 'bitcoin-core-startos/startos/manifest'
 import { sdk } from './sdk'
 import { i18n } from './i18n'
 import { btcPath, redisUrl, uiPort } from './fileModels/_env'
@@ -22,7 +23,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
         type: 'file',
         readonly: false,
       })
-      .mountDependency({
+      .mountDependency<typeof bitcoinManifest>({
         dependencyId: 'bitcoind',
         volumeId: 'main',
         subpath: null,
