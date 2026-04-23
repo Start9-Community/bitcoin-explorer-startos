@@ -10,7 +10,7 @@
 > BTC RPC Explorer. If a feature, setting, or behavior is not mentioned
 > here, the upstream documentation is accurate and fully applicable.
 
-[BTC RPC Explorer](https://github.com/janoside/btc-rpc-explorer) is a self-hosted Bitcoin blockchain explorer that connects directly to your Bitcoin Core node via RPC.
+[BTC RPC Explorer](https://github.com/janoside/btc-rpc-explorer) is a self-hosted Bitcoin blockchain explorer that connects directly to your Bitcoin node via RPC.
 
 ---
 
@@ -47,11 +47,11 @@
 
 ## Volume and Data Layout
 
-| Volume                | Mount Point                          | Purpose                                               |
-| --------------------- | ------------------------------------ | ----------------------------------------------------- |
-| `main`                | `/root/.config/btc-rpc-explorer.env` | Configuration file (mounted as single file)           |
-| `main`                | `/store.json`                        | StartOS settings storage                              |
-| (bitcoind dependency) | `/btcd`                              | Read-only access to Bitcoin Core data for cookie auth |
+| Volume                | Mount Point                          | Purpose                                          |
+| --------------------- | ------------------------------------ | ------------------------------------------------ |
+| `main`                | `/root/.config/btc-rpc-explorer.env` | Configuration file (mounted as single file)      |
+| `main`                | `/store.json`                        | StartOS settings storage                         |
+| (bitcoind dependency) | `/btcd`                              | Read-only access to Bitcoin data for cookie auth |
 
 **StartOS-specific files:**
 
@@ -70,7 +70,7 @@
 
 On first install, StartOS seeds the `.env` configuration file with default values (slow device mode on, privacy mode off, exchange rates off, Valkey caching enabled).
 
-**Key difference:** On StartOS, the Bitcoin Core connection is fully automatic — the explorer connects to `bitcoind.startos:8332` using cookie authentication from the mounted dependency volume.
+**Key difference:** On StartOS, the Bitcoin connection is fully automatic — the explorer connects to `bitcoind.startos:8332` using cookie authentication from the mounted dependency volume.
 
 ---
 
@@ -141,17 +141,17 @@ On first install, StartOS seeds the `.env` configuration file with default value
 
 ## Dependencies
 
-| Dependency   | Required | Version   | Purpose                          |
-| ------------ | -------- | --------- | -------------------------------- |
-| Bitcoin Core | **Yes**  | >= 28.3   | Provides blockchain data via RPC |
+| Dependency | Required | Version | Purpose                          |
+| ---------- | -------- | ------- | -------------------------------- |
+| Bitcoin    | **Yes**  | >= 28.3 | Provides blockchain data via RPC |
 
-The explorer requires Bitcoin Core with `server=1` enabled. StartOS automatically:
+The explorer requires Bitcoin with `server=1` enabled. StartOS automatically:
 
 - Connects to `bitcoind.startos:8332`
 - Uses cookie authentication from the mounted volume
 - Requires no manual RPC credential configuration
 
-**Bitcoin Core configuration notes (from upstream):**
+**Bitcoin configuration notes (from upstream):**
 
 - Best experience with `txindex=1` and no pruning
 - Works with pruned nodes but with reduced functionality (no full transaction details for pruned blocks)
@@ -167,7 +167,7 @@ The explorer requires Bitcoin Core with `server=1` enabled. StartOS automaticall
 **Restore behavior:**
 
 - Configuration preferences are restored
-- No blockchain data is stored locally (all from Bitcoin Core)
+- No blockchain data is stored locally (all from Bitcoin)
 
 ---
 
@@ -188,7 +188,7 @@ The explorer requires Bitcoin Core with `server=1` enabled. StartOS automaticall
 1. **No Electrum server integration** — `BTCEXP_ADDRESS_API` and `BTCEXP_ELECTRUM_SERVERS` are not configurable; address history features requiring Electrum are unavailable
 2. **No authentication options** — HTTP basic auth and SSO are not exposed
 3. **No geolocation features** — IP geolocation and mapping APIs are not configurable
-4. **Fixed Bitcoin connection** — must use the StartOS Bitcoin Core dependency; cannot connect to external Bitcoin nodes
+4. **Fixed Bitcoin connection** — must use the StartOS Bitcoin dependency; cannot connect to external Bitcoin nodes
 5. **Valkey instead of Redis** — uses Valkey (Redis-compatible) for caching; functionally identical but different implementation
 6. **Custom-built image** — built from source rather than using upstream Docker image
 
