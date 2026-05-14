@@ -10,7 +10,6 @@ export const manifest = setupManifest({
   upstreamRepo: 'https://github.com/janoside/btc-rpc-explorer',
   marketingUrl: 'https://bitcoinexplorer.org/',
   donationUrl: 'https://donate.bitcoinexplorer.org',
-  docsUrls: ['https://github.com/janoside/btc-rpc-explorer'],
   description: { short, long },
   volumes: ['main'],
   images: {
