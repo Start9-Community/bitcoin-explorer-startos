@@ -7,7 +7,7 @@
 ## What you get on StartOS
 
 - **A blockchain explorer web UI** that talks to your own Bitcoin node — no third-party explorer, no leaking your address lookups.
-- **Automatic wiring to Bitcoin Core.** The explorer connects to `bitcoind.startos:8332` using cookie authentication; you do not configure RPC credentials by hand.
+- **Automatic wiring to Bitcoin Core.** The explorer connects to your Bitcoin Core node's RPC over the internal StartOS network using cookie authentication; you do not configure RPC credentials by hand.
 - **A managed key-value cache.** A Valkey (Redis-compatible) sidecar is bundled and managed for you; transaction lookups stay fast without setting up Redis yourself.
 
 ## Getting set up

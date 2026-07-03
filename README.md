@@ -70,7 +70,7 @@
 
 On first install, StartOS seeds the `.env` configuration file with default values (slow device mode on, privacy mode off, exchange rates off, Valkey caching enabled).
 
-**Key difference:** On StartOS, the Bitcoin connection is fully automatic — the explorer connects to `bitcoind.startos:8332` using cookie authentication from the mounted dependency volume.
+**Key difference:** On StartOS, the Bitcoin connection is fully automatic — the explorer connects to Bitcoin Core's RPC over the internal StartOS network (the LXC bridge) using cookie authentication from the mounted dependency volume.
 
 ---
 
@@ -78,8 +78,8 @@ On first install, StartOS seeds the `.env` configuration file with default value
 
 | Setting                   | Upstream Method        | StartOS Method                                  |
 | ------------------------- | ---------------------- | ----------------------------------------------- |
-| `BTCEXP_BITCOIND_HOST`    | Env var                | Fixed: `bitcoind.startos`                       |
-| `BTCEXP_BITCOIND_PORT`    | Env var                | Fixed: `8332`                                   |
+| `BTCEXP_BITCOIND_HOST`    | Env var                | Auto-resolved: bitcoind RPC host over the LXC bridge |
+| `BTCEXP_BITCOIND_PORT`    | Env var                | Auto-resolved: bitcoind RPC port                |
 | `BTCEXP_BITCOIND_COOKIE`  | Env var                | Fixed: `/btcd/.cookie`                          |
 | `BTCEXP_HOST`             | Env var                | Fixed: `0.0.0.0`                                |
 | `BTCEXP_PORT`             | Env var (default 3002) | Fixed: `3002`                                   |
@@ -147,7 +147,7 @@ On first install, StartOS seeds the `.env` configuration file with default value
 
 The explorer requires Bitcoin with `server=1` enabled. StartOS automatically:
 
-- Connects to `bitcoind.startos:8332`
+- Connects to Bitcoin Core's RPC over the internal StartOS network (the LXC bridge)
 - Uses cookie authentication from the mounted volume
 - Requires no manual RPC credential configuration
 
@@ -233,9 +233,10 @@ startos_managed_env_vars:
   - BTCEXP_PRIVACY_MODE
   - BTCEXP_NO_RATES
   - BTCEXP_REDIS_URL
+resolved_env_vars:
+  - BTCEXP_BITCOIND_HOST: bitcoind RPC host (LXC bridge)
+  - BTCEXP_BITCOIND_PORT: bitcoind RPC port (LXC bridge)
 fixed_env_vars:
-  - BTCEXP_BITCOIND_HOST: bitcoind.startos
-  - BTCEXP_BITCOIND_PORT: 8332
   - BTCEXP_BITCOIND_COOKIE: /btcd/.cookie
   - BTCEXP_HOST: 0.0.0.0
   - BTCEXP_PORT: 3002
