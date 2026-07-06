@@ -10,8 +10,8 @@ export const uiPort = 3002
 export const redisUrl = 'redis://localhost:6379'
 
 const shape = z.object({
-  BTCEXP_BITCOIND_HOST: z.string().catch('127.0.0.1'),
-  BTCEXP_BITCOIND_PORT: z.string().catch('8332'),
+  BTCEXP_BITCOIND_HOST: z.string().optional().catch(undefined),
+  BTCEXP_BITCOIND_PORT: z.string().optional().catch(undefined),
   BTCEXP_BITCOIND_COOKIE: z.literal(cookiePath).catch(cookiePath),
   BTCEXP_HOST: z.literal('0.0.0.0').catch('0.0.0.0'),
   BTCEXP_PORT: z.literal(`${uiPort}`).catch(`${uiPort}`),

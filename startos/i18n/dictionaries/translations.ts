@@ -18,7 +18,6 @@ export default {
     13: 'Habilitar almacén de clave-valor para caché de transacciones',
     14: 'Comunicarse con la red Bitcoin',
     15: 'Un nodo completo de Bitcoin',
-    16: 'Bitcoin Core aún no es accesible en la red interna. Asegúrese de que esté instalado y en ejecución.',
   },
   de_DE: {
     0: 'Starte Bitcoin Explorer',
@@ -37,7 +36,6 @@ export default {
     13: 'Schlüssel-Wert-Speicher für Transaktions-Caching aktivieren',
     14: 'Mit dem Bitcoin-Netzwerk kommunizieren',
     15: 'Ein Bitcoin-Full-Node',
-    16: 'Bitcoin Core ist im internen Netzwerk noch nicht erreichbar. Bitte stellen Sie sicher, dass es installiert ist und läuft.',
   },
   pl_PL: {
     0: 'Uruchamianie Bitcoin Explorer',
@@ -56,7 +54,6 @@ export default {
     13: 'Włącz magazyn klucz-wartość do buforowania transakcji',
     14: 'Komunikacja z siecią Bitcoin',
     15: 'Pełny węzeł Bitcoin',
-    16: 'Bitcoin Core nie jest jeszcze dostępny w sieci wewnętrznej. Upewnij się, że jest zainstalowany i uruchomiony.',
   },
   fr_FR: {
     0: 'Démarrage de Bitcoin Explorer',
@@ -75,6 +72,5 @@ export default {
     13: 'Activer le stockage clé-valeur pour la mise en cache des transactions',
     14: 'Communiquer avec le réseau Bitcoin',
     15: 'Un nœud complet Bitcoin',
-    16: "Bitcoin Core n'est pas encore accessible sur le réseau interne. Veuillez vous assurer qu'il est installé et en cours d'exécution.",
   },
 } satisfies Record<string, LangDict>

@@ -7,12 +7,12 @@
 ## What you get on StartOS
 
 - **A blockchain explorer web UI** that talks to your own Bitcoin node — no third-party explorer, no leaking your address lookups.
-- **Automatic wiring to Bitcoin Core.** The explorer connects to your Bitcoin Core node's RPC over the internal StartOS network using cookie authentication; you do not configure RPC credentials by hand.
+- **Automatic wiring to Bitcoin.** The explorer connects to your Bitcoin node's RPC over the internal StartOS network using cookie authentication; you do not configure RPC credentials by hand.
 - **A managed key-value cache.** A Valkey (Redis-compatible) sidecar is bundled and managed for you; transaction lookups stay fast without setting up Redis yourself.
 
 ## Getting set up
 
-1. Install **Bitcoin Core** first if you have not already — Bitcoin Explorer depends on it. For the best experience the Bitcoin node should be running with `txindex=1` and no pruning; pruned nodes work but cannot show full details for pruned blocks.
+1. Install **Bitcoin** first if you have not already — Bitcoin Explorer depends on it. For the best experience the Bitcoin node should be running with `txindex=1` and no pruning; pruned nodes work but cannot show full details for pruned blocks.
 2. Start Bitcoin Explorer. On first launch it seeds its environment with sensible defaults (slow-device mode on, privacy mode off, exchange rates off, key-value caching on).
 3. Open the **Dashboard** tab and click the **Web UI** interface to open the explorer in your browser.
 4. If you want to change any of the defaults, run the **Configure** action.

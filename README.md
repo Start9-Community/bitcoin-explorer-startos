@@ -70,7 +70,7 @@
 
 On first install, StartOS seeds the `.env` configuration file with default values (slow device mode on, privacy mode off, exchange rates off, Valkey caching enabled).
 
-**Key difference:** On StartOS, the Bitcoin connection is fully automatic — the explorer connects to Bitcoin Core's RPC over the internal StartOS network (the LXC bridge) using cookie authentication from the mounted dependency volume.
+**Key difference:** On StartOS, the Bitcoin connection is fully automatic — the explorer connects to Bitcoin's RPC over the internal StartOS network (the LXC bridge) using cookie authentication from the mounted dependency volume.
 
 ---
 
@@ -147,7 +147,7 @@ On first install, StartOS seeds the `.env` configuration file with default value
 
 The explorer requires Bitcoin with `server=1` enabled. StartOS automatically:
 
-- Connects to Bitcoin Core's RPC over the internal StartOS network (the LXC bridge)
+- Connects to Bitcoin's RPC over the internal StartOS network (the LXC bridge)
 - Uses cookie authentication from the mounted volume
 - Requires no manual RPC credential configuration
 

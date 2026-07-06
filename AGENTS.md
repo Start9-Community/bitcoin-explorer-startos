@@ -10,7 +10,7 @@ Work this package's `TODO.md` from top to bottom. Keep `README.md` (architecture
 
 ## This repo
 
-- **Package id is `bitcoin-explorer`.** It hard-depends on Bitcoin Core (`bitcoind`). It reaches bitcoind's RPC over the **LXC bridge**, not `.startos` DNS: `main.ts` resolves bitcoind's `rpc` host via `sdk.host.get` (host/interface ids imported from `bitcoin-core-startos/startos/utils`) and writes the resolved `host:port` into the `.env` file the explorer reads. The `.cookie` comes from bitcoind's data volume, mounted read-only as a dependency mount. An optional Valkey (Redis) subcontainer provides transaction caching when the user enables it via the Configure action.
+- **Package id is `bitcoin-explorer`.** It hard-depends on Bitcoin (`bitcoind`). It reaches bitcoind's RPC over the **LXC bridge**, not `.startos` DNS: `main.ts` resolves bitcoind's `rpc` host via `sdk.host.get` (host/interface ids imported from `bitcoin-core-startos/startos/utils`) and writes the resolved `host:port` into the `.env` file the explorer reads. The `.cookie` comes from bitcoind's data volume, mounted read-only as a dependency mount. An optional Valkey (Redis) subcontainer provides transaction caching when the user enables it via the Configure action.
 
 ## Inspecting a running install
 

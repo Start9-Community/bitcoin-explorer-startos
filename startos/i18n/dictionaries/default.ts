@@ -24,9 +24,6 @@ const dict = {
   // manifest dependencies
   'Communicate with the Bitcoin Network': 14,
   'A Bitcoin Full Node': 15,
-
-  // main.ts (bitcoind connection)
-  'Bitcoin Core is not yet reachable on the internal network. Please ensure it is installed and running.': 16,
 } as const
 
 /**
