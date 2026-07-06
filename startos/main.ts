@@ -1,7 +1,8 @@
 import { manifest as bitcoinManifest } from 'bitcoin-core-startos/startos/manifest'
-import { rpcHostId, rpcInterfaceId } from 'bitcoin-core-startos/startos/utils'
+import { rpcHostId, rpcPort } from 'bitcoin-core-startos/startos/utils'
 import { sdk } from './sdk'
 import { i18n } from './i18n'
+import { bridgeAddress } from './utils'
 import { btcPath, redisUrl, uiPort } from './fileModels/_env'
 import { envFile } from './fileModels/_env'
 import { ExecCommandOptions } from '@start9labs/start-sdk/lib/mainFn/Daemons'
@@ -13,36 +14,26 @@ export const main = sdk.setupMain(async ({ effects }) => {
 
   const env = await envFile.read().const(effects)
 
-  // Resolve bitcoind's RPC endpoint over the LXC bridge (replaces the static
-  // `bitcoind.startos` DNS name) and persist it into the .env the explorer reads.
-  const rpc = await sdk.host
-    .get(effects, { hostId: rpcHostId, packageId: 'bitcoind' }, (host) => {
-      const iface =
-        host &&
-        Object.values(host.bindings)
-          .flatMap((b) => Object.values(b.interfaces))
-          .find((i) => i.id === rpcInterfaceId)
-      return iface
-        ? iface.addressInfo.filter({
-            kind: 'bridge',
-            predicate: (h) => h.metadata.kind === 'ipv4',
-          }).hostnames[0]
-        : undefined
-    })
-    .const()
-
-  if (!rpc)
-    throw new Error(
-      i18n(
-        'Bitcoin Core is not yet reachable on the internal network. Please ensure it is installed and running.',
-      ),
-    )
+  // Resolve bitcoind's RPC endpoint over the LXC bridge and persist it into the
+  // .env the explorer reads. The mapped bridge address only changes when the
+  // address itself does, so this .const() never restarts the explorer on
+  // bitcoind updates — it fires exactly on bitcoind install/uninstall/
+  // port-change. When bitcoind is absent the helper resolves null; we write a
+  // loopback placeholder and the .const() heals automatically once bitcoind
+  // appears.
+  const bridge =
+    (await bridgeAddress(effects, {
+      packageId: 'bitcoind',
+      hostId: rpcHostId,
+      internalPort: rpcPort,
+    }).const()) ?? `127.0.0.1:${rpcPort}`
+  const [bitcoindHost, bitcoindPort] = bridge.split(':')
 
   await envFile.merge(
     effects,
     {
-      BTCEXP_BITCOIND_HOST: rpc.hostname,
-      BTCEXP_BITCOIND_PORT: `${rpc.port}`,
+      BTCEXP_BITCOIND_HOST: bitcoindHost,
+      BTCEXP_BITCOIND_PORT: bitcoindPort,
     },
     { allowWriteAfterConst: true },
   )
