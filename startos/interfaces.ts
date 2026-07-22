@@ -2,8 +2,10 @@ import { sdk } from './sdk'
 import { i18n } from './i18n'
 import { uiPort } from './fileModels/_env'
 
+export const uiHostId = 'ui-multi'
+
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
-  const uiMulti = sdk.MultiHost.of(effects, 'ui-multi')
+  const uiMulti = sdk.MultiHost.of(effects, uiHostId)
   const uiMultiOrigin = await uiMulti.bindPort(uiPort, {
     protocol: 'http',
   })
