@@ -76,17 +76,17 @@ On first install, StartOS seeds the `.env` configuration file with default value
 
 ## Configuration Management
 
-| Setting                   | Upstream Method        | StartOS Method                                  |
-| ------------------------- | ---------------------- | ----------------------------------------------- |
+| Setting                   | Upstream Method        | StartOS Method                                       |
+| ------------------------- | ---------------------- | ---------------------------------------------------- |
 | `BTCEXP_BITCOIND_HOST`    | Env var                | Auto-resolved: bitcoind RPC host over the LXC bridge |
-| `BTCEXP_BITCOIND_PORT`    | Env var                | Auto-resolved: bitcoind RPC port                |
-| `BTCEXP_BITCOIND_COOKIE`  | Env var                | Fixed: `/btcd/.cookie`                          |
-| `BTCEXP_HOST`             | Env var                | Fixed: `0.0.0.0`                                |
-| `BTCEXP_PORT`             | Env var (default 3002) | Fixed: `3002`                                   |
-| `BTCEXP_SLOW_DEVICE_MODE` | Env var                | Configure action: "Resource intensive features" |
-| `BTCEXP_PRIVACY_MODE`     | Env var                | Configure action: "Privacy mode"                |
-| `BTCEXP_NO_RATES`         | Env var                | Configure action: "Exchange rates"              |
-| `BTCEXP_REDIS_URL`        | Env var                | Configure action: "Enable key-value store"      |
+| `BTCEXP_BITCOIND_PORT`    | Env var                | Auto-resolved: bitcoind RPC port                     |
+| `BTCEXP_BITCOIND_COOKIE`  | Env var                | Fixed: `/btcd/.cookie`                               |
+| `BTCEXP_HOST`             | Env var                | Fixed: `0.0.0.0`                                     |
+| `BTCEXP_PORT`             | Env var (default 3002) | Fixed: `3002`                                        |
+| `BTCEXP_SLOW_DEVICE_MODE` | Env var                | Configure action: "Resource intensive features"      |
+| `BTCEXP_PRIVACY_MODE`     | Env var                | Configure action: "Privacy mode"                     |
+| `BTCEXP_NO_RATES`         | Env var                | Configure action: "Exchange rates"                   |
+| `BTCEXP_REDIS_URL`        | Env var                | Configure action: "Enable key-value store"           |
 
 **Environment variables NOT configurable on StartOS:**
 
