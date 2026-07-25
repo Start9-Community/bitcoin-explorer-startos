@@ -14,8 +14,8 @@ export const main = sdk.setupMain(async ({ effects }) => {
   const env = await envFile.read().const(effects)
 
   // Resolve bitcoind's RPC endpoint over the LXC bridge and persist it into the
-  // .env the explorer reads. The mapped bridge address only changes when the
-  // address itself does, so this .const() never restarts the explorer on
+  // .env the explorer reads. The bridge address only changes when bitcoind's
+  // binding does, so this .const() never restarts the explorer on
   // bitcoind updates — it fires exactly on bitcoind install/uninstall/
   // port-change. When bitcoind is absent the helper resolves null; we leave the
   // address out of the .env so the explorer's health check stays red until
