@@ -2,7 +2,7 @@ import { manifest as bitcoinManifest } from 'bitcoin-core-startos/startos/manife
 import { rpcHostId, rpcPort } from 'bitcoin-core-startos/startos/utils'
 import { sdk } from './sdk'
 import { i18n } from './i18n'
-import { bridgeAddress } from './utils'
+import {} from './utils'
 import { btcPath, redisUrl, uiPort } from './fileModels/_env'
 import { envFile } from './fileModels/_env'
 import { ExecCommandOptions } from '@start9labs/start-sdk/lib/mainFn/Daemons'
@@ -21,11 +21,14 @@ export const main = sdk.setupMain(async ({ effects }) => {
   // port-change. When bitcoind is absent the helper resolves null; we leave the
   // address out of the .env so the explorer's health check stays red until
   // bitcoind appears, at which point the .const() heals it with one restart.
-  const bridge = await bridgeAddress(effects, {
-    packageId: 'bitcoind',
-    hostId: rpcHostId,
-    internalPort: rpcPort,
-  }).const()
+  const bridge = await sdk.host
+    .getBridgeAddress(effects, {
+      packageId: 'bitcoind',
+      hostId: rpcHostId,
+      internalPort: rpcPort,
+      ssl: false,
+    })
+    .const()
 
   if (bridge) {
     const [bitcoindHost, bitcoindPort] = bridge.split(':')
