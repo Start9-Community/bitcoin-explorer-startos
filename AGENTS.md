@@ -6,12 +6,8 @@ Develop it inside a StartOS packaging workspace created by `start-cli s9pk init-
 which provides the packaging guide and agent context one level up. If you're reading this in a
 bare clone with no workspace, the full guide is at <https://docs.start9.com/packaging>.
 
-Work this package's `TODO.md` from top to bottom. Keep `README.md` (architecture, for developers and LLMs) and `instructions.md` (end-user docs) in sync with your changes.
+Work this package's `TODO.md` from top to bottom. Keep `README.md` (technical reference for an AI support or administering agent) and `instructions.md` (end-user docs) in sync with your changes.
 
 ## This repo
 
-- **Package id is `bitcoin-explorer`.** It hard-depends on Bitcoin (`bitcoind`). It reaches bitcoind's RPC over the **LXC bridge**, not `.startos` DNS: `main.ts` resolves bitcoind's `rpc` host via `sdk.host.getBridgeAddress` (host id and port imported from `bitcoin-core-startos/startos/utils`), pinning `ssl: false` because that binding publishes both a plaintext and a TLS bridge address, and writes the resolved `host:port` into the `.env` file the explorer reads. The `.cookie` comes from bitcoind's data volume, mounted read-only as a dependency mount. An optional Valkey (Redis) subcontainer provides transaction caching when the user enables it via the Configure action.
-
-## Inspecting a running install
-
-To run a command inside the service's container (read its generated config, grep app logs), use `start-cli package attach bitcoin-explorer -n <name> -- <cmd>`. Select the subcontainer by **name** with `-n` (the name passed to `SubContainer.of` in `main.ts` — here `explorer`, or `valkey` when Redis is enabled) or by image with `-i`. Note: `-s/--subcontainer` matches the internal **Guid**, not the name, so passing a name to `-s` fails with "no matching subcontainers".
+- **`.env` is mounted as a `type: 'file'` mount**, not a directory, so only that one file from the volume is visible in the container.

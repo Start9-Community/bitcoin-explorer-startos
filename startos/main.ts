@@ -24,11 +24,17 @@ export const main = sdk.setupMain(async ({ effects }) => {
     .getBridgeAddress(effects, {
       packageId: 'bitcoind',
       hostId: rpcHostId,
+      // ssl: false is load-bearing -- the RPC binding publishes both a plaintext
+      // and a TLS bridge address, and without the pin the explorer can be handed
+      // the one it does not speak.
       internalPort: rpcPort,
       ssl: false,
     })
     .const()
 
+  // Only written when the bridge resolves: a placeholder host would leave the
+  // explorer looking healthy while fetching nothing, where an absent one keeps
+  // the health check red and the .const() heals it with one restart.
   if (bridge) {
     const [bitcoindHost, bitcoindPort] = bridge.split(':')
     await envFile.merge(
@@ -79,6 +85,9 @@ export const main = sdk.setupMain(async ({ effects }) => {
   }
 
   if (env?.BTCEXP_REDIS_URL == redisUrl) {
+    // Caching on returns a different daemon set, so the `valkey` subcontainer
+    // does not exist at all when it is off — anything reasoning about
+    // subcontainer names has to account for both shapes.
     const valkey = sdk.SubContainer.of(
       effects,
       { imageId: 'valkey' },

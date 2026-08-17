@@ -4,13 +4,15 @@
 
 # Bitcoin Explorer on StartOS
 
-> **Upstream docs:** <https://github.com/janoside/btc-rpc-explorer>
->
 > Everything not listed in this document should behave the same as upstream
-> BTC RPC Explorer. If a feature, setting, or behavior is not mentioned
-> here, the upstream documentation is accurate and fully applicable.
+> BTC RPC Explorer. If a feature, setting, or behavior is not mentioned here,
+> the upstream documentation is accurate and fully applicable — see the
+> Documentation section of `instructions.md` for links.
 
-[BTC RPC Explorer](https://github.com/janoside/btc-rpc-explorer) is a self-hosted Bitcoin blockchain explorer that connects directly to your Bitcoin node via RPC.
+[BTC RPC Explorer](https://github.com/janoside/btc-rpc-explorer) is a self-hosted Bitcoin blockchain explorer that reads everything from your own node over RPC. This package builds it from source, wires it to the Bitcoin on the same server automatically, and bundles a Redis-compatible cache.
+
+- **Upstream repo:** <https://github.com/janoside/btc-rpc-explorer>
+- **Wrapper repo:** <https://github.com/Start9-Community/bitcoin-explorer-startos>
 
 ---
 
@@ -18,199 +20,157 @@
 
 - [Image and Container Runtime](#image-and-container-runtime)
 - [Volume and Data Layout](#volume-and-data-layout)
-- [Installation and First-Run Flow](#installation-and-first-run-flow)
-- [Configuration Management](#configuration-management)
-- [Network Access and Interfaces](#network-access-and-interfaces)
-- [Actions (StartOS UI)](#actions-startos-ui)
+- [File Models](#file-models)
 - [Dependencies](#dependencies)
-- [Backups and Restore](#backups-and-restore)
+- [Network Access and Interfaces](#network-access-and-interfaces)
+- [Installation and First-Run Flow](#installation-and-first-run-flow)
+- [Actions](#actions)
+- [Tasks](#tasks)
 - [Health Checks](#health-checks)
+- [Backups and Restore](#backups-and-restore)
 - [Limitations and Differences](#limitations-and-differences)
-- [What Is Unchanged from Upstream](#what-is-unchanged-from-upstream)
-- [Contributing](#contributing)
 - [Quick Reference for AI Consumers](#quick-reference-for-ai-consumers)
 
 ---
 
 ## Image and Container Runtime
 
-| Property         | Value                                           |
-| ---------------- | ----------------------------------------------- |
-| Image            | Custom `dockerBuild` (built from source)        |
-| Additional Image | `valkey/valkey:alpine` (Redis-compatible cache) |
-| Architectures    | x86_64, aarch64                                 |
-| Entrypoint       | `npm start`                                     |
+Two images: the explorer built here from source, and an unmodified Valkey for caching.
 
-**Note:** Unlike upstream Docker deployment, this package builds the explorer from source rather than using a pre-built image.
+| Property      | Value                                                |
+| ------------- | ---------------------------------------------------- |
+| Images        | Built from this repo's `Dockerfile`; `valkey/valkey` |
+| Architectures | x86_64, aarch64                                      |
+| Command       | `npm start`, from `/workspace`                       |
 
----
+| Subcontainer | Purpose                                              |
+| ------------ | ---------------------------------------------------- |
+| `explorer`   | The explorer itself — the one to `attach` to         |
+| `valkey`     | The cache — **present only when caching is enabled** |
+
+Upstream publishes no image, so this one is built from the vendored source. **The `valkey` subcontainer does not merely idle when caching is off — it is not created at all**, because `main` builds a different daemon set depending on the setting. An agent looking for it on a service with caching disabled will not find it.
 
 ## Volume and Data Layout
 
-| Volume                | Mount Point                          | Purpose                                          |
-| --------------------- | ------------------------------------ | ------------------------------------------------ |
-| `main`                | `/root/.config/btc-rpc-explorer.env` | Configuration file (mounted as single file)      |
-| `main`                | `/store.json`                        | StartOS settings storage                         |
-| (bitcoind dependency) | `/btcd`                              | Read-only access to Bitcoin data for cookie auth |
+One volume, and almost nothing in it.
 
-**StartOS-specific files:**
+| Volume                | Mount Point                                       | Purpose                        |
+| --------------------- | ------------------------------------------------- | ------------------------------ |
+| `main`                | `/root/.config/btc-rpc-explorer.env` (file mount) | The `.env` file, and only that |
+| Bitcoin's `main` (ro) | `/btcd`                                           | The RPC cookie                 |
 
-- `.env` — environment configuration file managed by StartOS
-- `store.json` — stores user preferences for the configure action
+**The volume is mounted as a single file, not a directory.** The `.env` on the volume appears at the path upstream reads its configuration from; nothing else on the volume is visible inside the container.
 
----
+The explorer keeps no local state at all — every block, transaction, and address it displays is fetched from Bitcoin on request. What the cache holds is transient and lives in the Valkey container, not on disk.
 
-## Installation and First-Run Flow
+## File Models
 
-| Step               | Upstream                      | StartOS                                   |
-| ------------------ | ----------------------------- | ----------------------------------------- |
-| Bitcoin connection | Manual RPC configuration      | Auto-configured via dependency            |
-| Redis/caching      | Separate Redis setup required | Valkey included and managed automatically |
-| Configuration      | Edit `.env` file or CLI args  | Configure action in StartOS UI            |
+One model, and it is the whole of this package's configuration.
 
-On first install, StartOS seeds the `.env` configuration file with default values (slow device mode on, privacy mode off, exchange rates off, Valkey caching enabled).
+| File   | Format | Modelled               | Written by                                |
+| ------ | ------ | ---------------------- | ----------------------------------------- |
+| `.env` | env    | Yes — `FileHelper.env` | Install, `main`, and the Configure action |
 
-**Key difference:** On StartOS, the Bitcoin connection is fully automatic — the explorer connects to Bitcoin's RPC over the internal StartOS network (the LXC bridge) using cookie authentication from the mounted dependency volume.
+Its fields fall into three groups, and which group a key is in decides what happens to a hand edit:
 
----
+- **Pinned by the package.** `BTCEXP_BITCOIND_COOKIE`, `BTCEXP_HOST`, and `BTCEXP_PORT` are `z.literal(...).catch(...)` — a changed value is not merely overwritten on the next write, it is **repaired on read**. They can only ever be the cookie's mount path, all interfaces, and the port the interface is bound to.
+- **Resolved at start.** `BTCEXP_BITCOIND_HOST` and `BTCEXP_BITCOIND_PORT` are written by `main` from Bitcoin's live RPC address over the internal bridge, and rewritten whenever that address changes.
+- **User-owned via the action.** `BTCEXP_SLOW_DEVICE_MODE`, `BTCEXP_PRIVACY_MODE`, `BTCEXP_NO_RATES`, and `BTCEXP_REDIS_URL`.
 
-## Configuration Management
+**When Bitcoin is absent, the address keys are left out rather than filled in.** The explorer's health check then stays red until Bitcoin appears, at which point `main` heals it with a single restart. Writing a placeholder would instead produce a service that looks healthy and fetches nothing.
 
-| Setting                   | Upstream Method        | StartOS Method                                       |
-| ------------------------- | ---------------------- | ---------------------------------------------------- |
-| `BTCEXP_BITCOIND_HOST`    | Env var                | Auto-resolved: bitcoind RPC host over the LXC bridge |
-| `BTCEXP_BITCOIND_PORT`    | Env var                | Auto-resolved: bitcoind RPC port                     |
-| `BTCEXP_BITCOIND_COOKIE`  | Env var                | Fixed: `/btcd/.cookie`                               |
-| `BTCEXP_HOST`             | Env var                | Fixed: `0.0.0.0`                                     |
-| `BTCEXP_PORT`             | Env var (default 3002) | Fixed: `3002`                                        |
-| `BTCEXP_SLOW_DEVICE_MODE` | Env var                | Configure action: "Resource intensive features"      |
-| `BTCEXP_PRIVACY_MODE`     | Env var                | Configure action: "Privacy mode"                     |
-| `BTCEXP_NO_RATES`         | Env var                | Configure action: "Exchange rates"                   |
-| `BTCEXP_REDIS_URL`        | Env var                | Configure action: "Enable key-value store"           |
+The address is resolved with SSL explicitly off, because Bitcoin's RPC binding publishes both a plaintext and a TLS bridge address and the explorer speaks the former.
 
-**Environment variables NOT configurable on StartOS:**
-
-- `BTCEXP_ADDRESS_API` — address lookup backend selection
-- `BTCEXP_ELECTRUM_SERVERS` — electrum server configuration
-- `BTCEXP_BASIC_AUTH_PASSWORD` — HTTP basic authentication
-- `BTCEXP_SSO_TOKEN_FILE` — SSO authentication
-- `BTCEXP_IPSTACK_APIKEY` — peer IP geolocation
-- `BTCEXP_MAPBOX_APIKEY` — peer location mapping
-- `BTCEXP_DEMO` — demo mode
-- `BTCEXP_BITCOIND_RPC_TIMEOUT` — RPC timeout
-
----
-
-## Network Access and Interfaces
-
-| Interface | Port | Protocol | Purpose                       |
-| --------- | ---- | -------- | ----------------------------- |
-| Web UI    | 3002 | HTTP     | Blockchain explorer interface |
-
-**Access methods (StartOS 0.4.0):**
-
-- LAN IP with unique port
-- `<hostname>.local` with unique port
-- Tor `.onion` address
-- Custom domains (if configured)
-
----
-
-## Actions (StartOS UI)
-
-### Configure
-
-| Property     | Value                    |
-| ------------ | ------------------------ |
-| ID           | `configure`              |
-| Name         | Configure                |
-| Visibility   | Enabled (always visible) |
-| Availability | Any status               |
-| Purpose      | Adjust explorer settings |
-
-**Options:**
-
-| Setting                     | Default | Description                                                |
-| --------------------------- | ------- | ---------------------------------------------------------- |
-| Resource intensive features | Off     | Enables UTXO set queries and 24hr volume stats             |
-| Privacy mode                | Off     | Disables exchange-rate and IP-geolocation queries          |
-| Exchange rates              | Off     | Enables fiat exchange rate display                         |
-| Enable key-value store      | On      | Uses Valkey for transaction caching (improves performance) |
-
----
+Every other `BTCEXP_*` variable upstream supports is unset, and setting one by hand survives — the model does not strip unknown keys — but nothing in the package will manage it.
 
 ## Dependencies
 
-| Dependency | Required | Version | Purpose                          |
-| ---------- | -------- | ------- | -------------------------------- |
-| Bitcoin    | **Yes**  | >= 28.3 | Provides blockchain data via RPC |
+One, and it is required.
 
-The explorer requires Bitcoin with `server=1` enabled. StartOS automatically:
+| Dependency | Required | Health checks required | Mounted                      | Why                             |
+| ---------- | -------- | ---------------------- | ---------------------------- | ------------------------------- |
+| Bitcoin    | Yes      | `bitcoind`             | `main`, read-only at `/btcd` | Every piece of data it displays |
 
-- Connects to Bitcoin's RPC over the internal StartOS network (the LXC bridge)
-- Uses cookie authentication from the mounted volume
-- Requires no manual RPC credential configuration
+Authentication is by **cookie**, read from Bitcoin's own data volume, so there is no credential to configure and none to rotate. The dependency is `kind: 'running'`, so the explorer will not start until Bitcoin is up and healthy.
 
-**Bitcoin configuration notes (from upstream):**
+Refer to the dependency as **Bitcoin**: either Bitcoin Core or Bitcoin Knots satisfies it.
 
-- Best experience with `txindex=1` and no pruning
-- Works with pruned nodes but with reduced functionality (no full transaction details for pruned blocks)
+**What Bitcoin's own configuration decides:** a node with the transaction index enabled and no pruning gives the explorer its full feature set. A pruned node works, but blocks that have been pruned cannot be shown in detail — which presents as an explorer that displays recent history correctly and older blocks incompletely.
 
----
+## Network Access and Interfaces
 
-## Backups and Restore
+One interface.
 
-**Included in backup:**
+| Interface | Id   | Type | Port | Description       |
+| --------- | ---- | ---- | ---- | ----------------- |
+| Web UI    | `ui` | ui   | 3002 | The web interface |
 
-- `main` volume — configuration and settings
+Bound on the `ui-multi` MultiHost over HTTP and not masked.
 
-**Restore behavior:**
+**There is no authentication.** Upstream's basic-auth and SSO options are not exposed by this package, so anyone who can reach the address can use the explorer. StartOS's per-address controls are the access boundary — which matters more here than for most read-only services, because the explorer will happily answer address queries about anything.
 
-- Configuration preferences are restored
-- No blockchain data is stored locally (all from Bitcoin)
+## Installation and First-Run Flow
 
----
+Install seeds the `.env` with defaults and nothing else. There is no task, no credential, and no wizard.
+
+The defaults are chosen for modest hardware: slow-device mode on, exchange rates off, privacy mode off, caching on. Those first two mean a fresh install does less work and makes no outbound requests for price data.
+
+**Bitcoin must be installed first**, and the explorer will not start until it is running and healthy. If Bitcoin is added afterwards, the explorer heals on its own with one restart rather than needing to be reconfigured.
+
+## Actions
+
+One action.
+
+### Configure
+
+Four toggles. Run it to trade resource use against features, or to stop the explorer making outbound requests.
+
+- **What it changes:** four keys in `.env`.
+- **Cost:** the service restarts, and enabling or disabling caching changes the daemon set — the Valkey container is created or destroyed accordingly.
+- **Repeat safety:** idempotent.
+
+| Toggle                      | Default | What it does                                                                  |
+| --------------------------- | ------- | ----------------------------------------------------------------------------- |
+| Resource intensive features | Off     | Enables the UTXO set summary and similar heavy queries                        |
+| Privacy mode                | Off     | Stops outbound exchange-rate and IP-geolocation requests                      |
+| Exchange rates              | Off     | Shows fiat prices, which requires an outbound request                         |
+| Key-value store for caching | On      | Runs the Valkey cache; turning it off slows repeated lookups but frees memory |
+
+**Privacy mode and Exchange rates interact.** Privacy mode suppresses the outbound requests that exchange rates need, so enabling both leaves rates unavailable — the more restrictive setting wins, which is the safe direction but not an obvious one.
+
+**Resource intensive features is off for a reason.** A UTXO set summary asks Bitcoin to walk its entire UTXO set, which on modest hardware takes minutes and loads the node, not the explorer.
+
+## Tasks
+
+None. This package raises no tasks, so the service is never held on a prompt and its ordinary controls are always available.
 
 ## Health Checks
 
-| Check         | Method              | Grace Period |
-| ------------- | ------------------- | ------------ |
-| Web Interface | Port 3002 listening | Default      |
+One check, on the explorer.
 
-**Messages:**
+| Check     | Displayed as    | Method                 |
+| --------- | --------------- | ---------------------- |
+| `primary` | "Web Interface" | Port 3002 is listening |
 
-- Success: "The web interface is ready"
+The cache has a readiness check of its own but it is not displayed — it pings Valkey and, on failure, restarts the service rather than reporting anything to the user. So a service that restarts repeatedly with no failing check shown is the cache; the service logs name it.
 
----
+**A failing "Web Interface" check most often means Bitcoin, not the explorer.** With no RPC address in the `.env` the explorer starts and cannot serve, which surfaces here rather than as a dependency error.
+
+## Backups and Restore
+
+The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`. In practice that is one file, the `.env`.
+
+**There is nothing else to back up.** The explorer stores no blockchain data locally and the cache is transient, so a restored instance is immediately equivalent to the original once Bitcoin is present. The Bitcoin address in the restored `.env` is re-resolved on the new box, so it does not matter that it travelled with the backup.
 
 ## Limitations and Differences
 
-1. **No Electrum server integration** — `BTCEXP_ADDRESS_API` and `BTCEXP_ELECTRUM_SERVERS` are not configurable; address history features requiring Electrum are unavailable
-2. **No authentication options** — HTTP basic auth and SSO are not exposed
-3. **No geolocation features** — IP geolocation and mapping APIs are not configurable
-4. **Fixed Bitcoin connection** — must use the StartOS Bitcoin dependency; cannot connect to external Bitcoin nodes
-5. **Valkey instead of Redis** — uses Valkey (Redis-compatible) for caching; functionally identical but different implementation
-6. **Custom-built image** — built from source rather than using upstream Docker image
-
----
-
-## What Is Unchanged from Upstream
-
-- Full blockchain explorer functionality
-- Block and transaction viewing
-- Address lookup (without Electrum-dependent features)
-- Mempool visualization
-- Network statistics dashboard
-- JSON REST API
-- RPC command browser
-- Search functionality
-- Mining/block analysis tools
-
----
-
-## Contributing
-
-Build and development workflow follow the StartOS packaging guide: <https://docs.start9.com/packaging>. Keep `README.md`, `instructions.md`, and `AGENTS.md` in sync with any change to user-visible behavior or package structure.
+1. **No authentication.** Upstream's basic auth and SSO are not exposed; reachability is the only access control.
+2. **No Electrum integration.** The address-API and Electrum-server settings are not exposed, so address-history features that depend on an Electrum server are unavailable.
+3. **No geolocation or mapping.** The API-key settings for those are not exposed.
+4. **The Bitcoin node is fixed** to the StartOS dependency; an external node cannot be used.
+5. **Valkey stands in for Redis.** It is protocol-compatible, and the setting is still named for Redis in upstream's configuration.
+6. **Built from source**, because upstream publishes no image.
+7. **A pruned Bitcoin node limits what can be displayed** for pruned blocks.
 
 ---
 
@@ -218,39 +178,35 @@ Build and development workflow follow the StartOS packaging guide: <https://docs
 
 ```yaml
 package_id: bitcoin-explorer
-image: dockerBuild (custom)
-additional_images:
-  - valkey/valkey:alpine
-architectures: [x86_64, aarch64]
+image: built from ./Dockerfile # plus valkey/valkey
+architectures:
+  - x86_64
+  - aarch64
+subcontainers:
+  - explorer
+  - valkey # created only when caching is enabled
 volumes:
-  main: /root/.config/btc-rpc-explorer.env (file mount)
-ports:
-  ui: 3002
-dependencies:
-  - bitcoind (required)
-startos_managed_env_vars:
+  main: /root/.config/btc-rpc-explorer.env # file mount of .env
+file_models:
+  - .env
+startos_managed_env_vars: # all written into .env, not passed to the process
+  - BTCEXP_BITCOIND_HOST # resolved from bitcoind
+  - BTCEXP_BITCOIND_PORT # resolved from bitcoind
+  - BTCEXP_BITCOIND_COOKIE # pinned
+  - BTCEXP_HOST # pinned
+  - BTCEXP_PORT # pinned
   - BTCEXP_SLOW_DEVICE_MODE
   - BTCEXP_PRIVACY_MODE
   - BTCEXP_NO_RATES
   - BTCEXP_REDIS_URL
-resolved_env_vars:
-  - BTCEXP_BITCOIND_HOST: bitcoind RPC host (LXC bridge)
-  - BTCEXP_BITCOIND_PORT: bitcoind RPC port (LXC bridge)
-fixed_env_vars:
-  - BTCEXP_BITCOIND_COOKIE: /btcd/.cookie
-  - BTCEXP_HOST: 0.0.0.0
-  - BTCEXP_PORT: 3002
-upstream_env_vars_not_exposed:
-  - BTCEXP_ADDRESS_API
-  - BTCEXP_ELECTRUM_SERVERS
-  - BTCEXP_BASIC_AUTH_PASSWORD
-  - BTCEXP_SSO_TOKEN_FILE
-  - BTCEXP_IPSTACK_APIKEY
-  - BTCEXP_MAPBOX_APIKEY
+dependencies:
+  - bitcoind # required, kind: running, cookie auth via a read-only mount
+interfaces:
+  ui: { type: ui, port: 3002 }
 actions:
-  - configure (enabled, any)
+  - configure
+tasks: []
 health_checks:
-  - port_listening: 3002
-backup_volumes:
-  - main
+  - primary # displayed "Web Interface"
+  - valkey # internal, not displayed; only when caching is enabled
 ```
