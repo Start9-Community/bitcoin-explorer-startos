@@ -2,3 +2,7 @@
 **/.git/
 **/.github/
 **/pnpm-lock.yaml
+javascript
+ncc-cache
+docker-images
+*.s9pk
