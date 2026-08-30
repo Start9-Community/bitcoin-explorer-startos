@@ -2,6 +2,7 @@
 
 ## Documentation
 
+- [Start9 Bitcoin Guides](https://docs.start9.com/bitcoin-guides/) — archival versus pruned Bitcoin nodes on StartOS, and what a block explorer needs from one.
 - [BTC RPC Explorer upstream repository](https://github.com/janoside/btc-rpc-explorer) — the upstream project README and configuration reference.
 
 ## What you get on StartOS
