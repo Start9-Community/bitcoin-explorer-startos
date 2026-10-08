@@ -8,23 +8,29 @@ export const inputSpec = InputSpec.of({
   intensive: Value.toggle({
     name: i18n('Resource intensive features'),
     description: i18n(
-      'Enable resource-intensive features, including: UTXO set summary querying',
+      'Turns on difficulty history, the UTXO set summary and 24-hour transaction volume, and shows more items per page. These put extra load on Bitcoin, so leave this off on slower hardware.',
     ),
     default: false,
   }),
   privacy: Value.toggle({
     name: i18n('Privacy mode'),
-    description: i18n('Disable: Exchange-rate queries, IP-geolocation queries'),
+    description: i18n(
+      'Blocks exchange-rate requests to outside services, even when Exchange rates is on.',
+    ),
     default: false,
   }),
   rates: Value.toggle({
     name: i18n('Exchange rates'),
-    description: i18n('Enable exchange-rate queries'),
+    description: i18n(
+      'Shows fiat prices, fetched from an outside exchange-rate service. Has no effect while Privacy mode is on.',
+    ),
     default: false,
   }),
   redis: Value.toggle({
     name: i18n('Enable key-value store for tx caching'),
-    description: null,
+    description: i18n(
+      'Caches Bitcoin RPC results in a bundled Valkey store, so repeated lookups are faster. Turn it off to free the memory it uses.',
+    ),
     default: true,
     immutable: false,
   }),
@@ -36,7 +42,9 @@ export const configure = sdk.Action.withInput(
   // metadata
   async ({ effects }) => ({
     name: i18n('Configure'),
-    description: '',
+    description: i18n(
+      'Trade resource use against features, or stop the explorer making outbound requests.',
+    ),
     warning: null,
     allowedStatuses: 'any',
     group: null,

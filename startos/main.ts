@@ -79,7 +79,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       fn: () =>
         sdk.healthCheck.checkPortListening(effects, uiPort, {
           successMessage: i18n('The web interface is ready'),
-          errorMessage: '',
+          errorMessage: i18n('The web interface is not ready'),
         }),
     },
   }
