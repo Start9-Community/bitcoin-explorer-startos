@@ -28,7 +28,7 @@ The **Web UI** lands you on the explorer home page — current block height, rec
 
 - **Configure** — tune four toggles that map to the `BTCEXP_*` environment variables exposed by upstream:
   - _Resource intensive features_ (default off) — enable the UTXO set summary and 24-hour volume stats. Leave off on slower hardware.
-  - _Privacy mode_ (default off) — disable outbound exchange-rate and IP-geolocation queries.
+  - _Privacy mode_ (default off) — block outbound exchange-rate queries, even when _Exchange rates_ is on.
   - _Exchange rates_ (default off) — show fiat exchange rates in the UI.
   - _Enable key-value store for tx caching_ (default on) — use the bundled Valkey cache for transaction lookups; turning it off makes repeated lookups slower but reduces memory use.
 

@@ -91,7 +91,7 @@ One, and it is required.
 | ---------- | -------- | ---------------------- | ---------------------------- | ------------------------------- |
 | Bitcoin    | Yes      | `bitcoind`             | `main`, read-only at `/btcd` | Every piece of data it displays |
 
-Authentication is by **cookie**, read from Bitcoin's own data volume, so there is no credential to configure and none to rotate. The dependency is `kind: 'running'`, so the explorer will not start until Bitcoin is up and healthy.
+Authentication is by **cookie**, read from Bitcoin's own data volume, so there is no credential to configure and none to rotate. The dependency is `kind: 'running'` with the `bitcoind` health check, so StartOS shows it unmet until Bitcoin is up and healthy.
 
 Refer to the dependency as **Bitcoin**: either Bitcoin Core or Bitcoin Knots satisfies it.
 
@@ -115,7 +115,7 @@ Install seeds the `.env` with defaults and nothing else. There is no task, no cr
 
 The defaults are chosen for modest hardware: slow-device mode on, exchange rates off, privacy mode off, caching on. Those first two mean a fresh install does less work and makes no outbound requests for price data.
 
-**Bitcoin must be installed first**, and the explorer will not start until it is running and healthy. If Bitcoin is added afterwards, the explorer heals on its own with one restart rather than needing to be reconfigured.
+**Bitcoin must be installed and running** for the explorer to show anything. If Bitcoin is added afterwards, the explorer heals on its own with one restart rather than needing to be reconfigured.
 
 ## Actions
 
@@ -132,7 +132,7 @@ Four toggles. Run it to trade resource use against features, or to stop the expl
 | Toggle                      | Default | What it does                                                                  |
 | --------------------------- | ------- | ----------------------------------------------------------------------------- |
 | Resource intensive features | Off     | Enables the UTXO set summary and similar heavy queries                        |
-| Privacy mode                | Off     | Stops outbound exchange-rate and IP-geolocation requests                      |
+| Privacy mode                | Off     | Stops outbound exchange-rate requests, even with Exchange rates on            |
 | Exchange rates              | Off     | Shows fiat prices, which requires an outbound request                         |
 | Key-value store for caching | On      | Runs the Valkey cache; turning it off slows repeated lookups but frees memory |
 
