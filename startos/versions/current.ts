@@ -1,18 +1,18 @@
 import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '3.5.1:15',
+  version: '3.5.1:16',
   releaseNotes: {
-    en_US: `- Configure explains what each of its settings does.
-- Bitcoin must be at least 28.4:29, 29.4:16, 30.3:16 or 31.1:16, depending on its major version. Bitcoin Knots (pre-RDTS) 29.3:29 or later also works.`,
-    es_ES: `- Configurar explica qué hace cada uno de sus ajustes.
-- Bitcoin debe ser al menos la versión 28.4:29, 29.4:16, 30.3:16 o 31.1:16, según su versión principal. También funciona Bitcoin Knots (pre-RDTS) 29.3:29 o posterior.`,
-    de_DE: `- Konfigurieren erklärt, was jede seiner Einstellungen bewirkt.
-- Bitcoin muss je nach Hauptversion mindestens 28.4:29, 29.4:16, 30.3:16 oder 31.1:16 sein. Bitcoin Knots (pre-RDTS) ab 29.3:29 funktioniert ebenfalls.`,
-    pl_PL: `- Konfiguruj wyjaśnia, co robi każde z jego ustawień.
-- Bitcoin musi być co najmniej w wersji 28.4:29, 29.4:16, 30.3:16 lub 31.1:16, zależnie od wersji głównej. Działa też Bitcoin Knots (pre-RDTS) 29.3:29 lub nowszy.`,
-    fr_FR: `- Configurer explique ce que fait chacun de ses réglages.
-- Bitcoin doit être au moins en version 28.4:29, 29.4:16, 30.3:16 ou 31.1:16, selon sa version majeure. Bitcoin Knots (pre-RDTS) 29.3:29 ou plus récent fonctionne aussi.`,
+    en_US:
+      'Updates Node.js to 24.22.1 with security fixes and the StartOS SDK to 3.1.0. Node.js security notes: https://nodejs.org/en/blog/vulnerability/october-2026-security-releases',
+    es_ES:
+      'Actualiza Node.js a 24.22.1 con correcciones de seguridad y el SDK de StartOS a 3.1.0. Notas de seguridad de Node.js: https://nodejs.org/en/blog/vulnerability/october-2026-security-releases',
+    de_DE:
+      'Aktualisiert Node.js auf 24.22.1 mit Sicherheitskorrekturen und das StartOS-SDK auf 3.1.0. Sicherheitshinweise zu Node.js: https://nodejs.org/en/blog/vulnerability/october-2026-security-releases',
+    pl_PL:
+      'Aktualizuje Node.js do wersji 24.22.1 z poprawkami bezpieczeństwa oraz SDK StartOS do wersji 3.1.0. Informacje o bezpieczeństwie Node.js: https://nodejs.org/en/blog/vulnerability/october-2026-security-releases',
+    fr_FR:
+      'Met à jour Node.js vers 24.22.1 avec des correctifs de sécurité et le SDK StartOS vers 3.1.0. Notes de sécurité de Node.js : https://nodejs.org/en/blog/vulnerability/october-2026-security-releases',
   },
   migrations: {
     up: async () => {},
