@@ -18,6 +18,8 @@ export default {
     14: 'Almacena en caché los resultados RPC de Bitcoin en un almacén Valkey incluido, para que las consultas repetidas sean más rápidas. Desactívelo para liberar la memoria que usa.',
     15: 'Equilibre el uso de recursos frente a las funciones, o impida que el explorador haga solicitudes externas.',
     16: 'La interfaz web no está lista',
+    17: 'Conexión con Bitcoin',
+    18: 'Actualice Bitcoin para que Bitcoin Explorer pueda conectarse a él',
   },
   de_DE: {
     0: 'Starte Bitcoin Explorer',
@@ -36,6 +38,8 @@ export default {
     14: 'Speichert Bitcoin-RPC-Ergebnisse in einem mitgelieferten Valkey-Speicher zwischen, damit wiederholte Abfragen schneller sind. Schalten Sie es aus, um den belegten Speicher freizugeben.',
     15: 'Wägen Sie Ressourcenverbrauch gegen Funktionen ab oder verhindern Sie, dass der Explorer externe Anfragen stellt.',
     16: 'Die Weboberfläche ist nicht bereit',
+    17: 'Bitcoin-Verbindung',
+    18: 'Aktualisieren Sie Bitcoin, damit Bitcoin Explorer sich damit verbinden kann',
   },
   pl_PL: {
     0: 'Uruchamianie Bitcoin Explorer',
@@ -54,6 +58,8 @@ export default {
     14: 'Buforuje wyniki RPC Bitcoin w dołączonym magazynie Valkey, dzięki czemu powtarzane zapytania są szybsze. Wyłącz tę opcję, aby zwolnić używaną przez niego pamięć.',
     15: 'Zrównoważ zużycie zasobów i dostępne funkcje lub zablokuj wysyłanie zewnętrznych zapytań przez eksplorator.',
     16: 'Interfejs webowy nie jest gotowy',
+    17: 'Połączenie z Bitcoinem',
+    18: 'Zaktualizuj Bitcoina, aby Bitcoin Explorer mógł się z nim połączyć',
   },
   fr_FR: {
     0: 'Démarrage de Bitcoin Explorer',
@@ -72,5 +78,7 @@ export default {
     14: "Met en cache les résultats RPC de Bitcoin dans un stockage Valkey intégré, pour que les recherches répétées soient plus rapides. Désactivez-le pour libérer la mémoire qu'il utilise.",
     15: "Arbitrez entre consommation de ressources et fonctionnalités, ou empêchez l'explorateur d'effectuer des requêtes externes.",
     16: "L'interface web n'est pas prête",
+    17: 'Connexion à Bitcoin',
+    18: "Mettez Bitcoin à jour pour que Bitcoin Explorer puisse s'y connecter",
   },
 } satisfies Record<string, LangDict>

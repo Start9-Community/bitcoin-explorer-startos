@@ -6,6 +6,8 @@ const dict = {
   'Web Interface': 1,
   'The web interface is ready': 2,
   'The web interface is not ready': 16,
+  'Bitcoin Connection': 17,
+  'Update Bitcoin so Bitcoin Explorer can connect to it': 18,
 
   // interfaces.ts
   'Web UI': 4,

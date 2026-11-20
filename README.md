@@ -152,6 +152,8 @@ One check, on the explorer.
 | --------- | --------------- | ---------------------- |
 | `primary` | "Web Interface" | Port 3002 is listening |
 
+While the installed Bitcoin is too old to publish its `public` volume, the explorer mounts nothing from it and runs no daemon: a lone `bitcoin` check, "Bitcoin Connection", fails and asks for Bitcoin to be updated. The installed manifest is watched, so updating Bitcoin starts the explorer normally.
+
 The cache has a readiness check of its own but it is not displayed — it pings Valkey and, on failure, restarts the service rather than reporting anything to the user. So a service that restarts repeatedly with no failing check shown is the cache; the service logs name it.
 
 **A failing "Web Interface" check most often means Bitcoin, not the explorer.** With no RPC address in the `.env` the explorer starts and cannot serve, which surfaces here rather than as a dependency error.
@@ -208,5 +210,6 @@ actions:
 tasks: []
 health_checks:
   - primary # displayed "Web Interface"
+  - bitcoin # displayed "Bitcoin Connection"; only while Bitcoin is too old to publish its public volume
   - valkey # internal, not displayed; only when caching is enabled
 ```

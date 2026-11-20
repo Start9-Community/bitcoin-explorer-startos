@@ -18,6 +18,8 @@
 3. Open the **Dashboard** tab and click the **Web UI** interface to open the explorer in your browser.
 4. If you want to change any of the defaults, run the **Configure** action.
 
+If Bitcoin Explorer's **Bitcoin Connection** check asks you to update Bitcoin, install Bitcoin's update; the explorer starts on its own once it is done.
+
 ## Using Bitcoin Explorer
 
 ### Web interface
