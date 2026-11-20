@@ -48,16 +48,16 @@ Two images: the explorer built here from source, and an unmodified Valkey for ca
 | `explorer`   | The explorer itself — the one to `attach` to         |
 | `valkey`     | The cache — **present only when caching is enabled** |
 
-Upstream publishes no image, so this one is built from the vendored source. **The `valkey` subcontainer does not merely idle when caching is off — it is not created at all**, because `main` builds a different daemon set depending on the setting. An agent looking for it on a service with caching disabled will not find it.
+Upstream publishes no image, so this one is built from the vendored source, installing dependencies with `npm ci` from upstream's `npm-shrinkwrap.json`. **The `valkey` subcontainer does not merely idle when caching is off — it is not created at all**, because `main` builds a different daemon set depending on the setting. An agent looking for it on a service with caching disabled will not find it.
 
 ## Volume and Data Layout
 
 One volume, and almost nothing in it.
 
-| Volume                | Mount Point                                       | Purpose                        |
-| --------------------- | ------------------------------------------------- | ------------------------------ |
-| `main`                | `/root/.config/btc-rpc-explorer.env` (file mount) | The `.env` file, and only that |
-| Bitcoin's `main` (ro) | `/btcd`                                           | The RPC cookie                 |
+| Volume                  | Mount Point                                       | Purpose                        |
+| ----------------------- | ------------------------------------------------- | ------------------------------ |
+| `main`                  | `/root/.config/btc-rpc-explorer.env` (file mount) | The `.env` file, and only that |
+| Bitcoin's `public` (ro) | `/btcd`                                           | The RPC cookie                 |
 
 **The volume is mounted as a single file, not a directory.** The `.env` on the volume appears at the path upstream reads its configuration from; nothing else on the volume is visible inside the container.
 
@@ -87,11 +87,11 @@ Every other `BTCEXP_*` variable upstream supports is unset, and setting one by h
 
 One, and it is required.
 
-| Dependency | Required | Health checks required | Mounted                      | Why                             |
-| ---------- | -------- | ---------------------- | ---------------------------- | ------------------------------- |
-| Bitcoin    | Yes      | `bitcoind`             | `main`, read-only at `/btcd` | Every piece of data it displays |
+| Dependency | Required | Health checks required | Mounted                        | Why                             |
+| ---------- | -------- | ---------------------- | ------------------------------ | ------------------------------- |
+| Bitcoin    | Yes      | `bitcoind`             | `public`, read-only at `/btcd` | Every piece of data it displays |
 
-Authentication is by **cookie**, read from Bitcoin's own data volume, so there is no credential to configure and none to rotate. The dependency is `kind: 'running'` with the `bitcoind` health check, so StartOS shows it unmet until Bitcoin is up and healthy.
+Authentication is by **cookie**, read from the `public` volume Bitcoin publishes for its dependents (the cookie, never its data directory), so there is no credential to configure and none to rotate. The explorer waits for a nonempty cookie before starting: upstream only watches for cookie changes when the file exists at startup. The dependency is `kind: 'running'` with the `bitcoind` health check, so StartOS shows it unmet until Bitcoin is up and healthy.
 
 Refer to the dependency as **Bitcoin**: either Bitcoin Core or Bitcoin Knots satisfies it.
 
@@ -200,7 +200,7 @@ startos_managed_env_vars: # all written into .env, not passed to the process
   - BTCEXP_NO_RATES
   - BTCEXP_REDIS_URL
 dependencies:
-  - bitcoind # required, kind: running, cookie auth via a read-only mount
+  - bitcoind # required, kind: running, cookie auth via a read-only mount of its public volume
 interfaces:
   ui: { type: ui, port: 3002 }
 actions:

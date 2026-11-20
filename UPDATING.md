@@ -27,8 +27,8 @@ This package has two upstream sources: BTC RPC Explorer (vendored as a git submo
   cd .. && git add explorer
   ```
 
-  Then re-check the `Dockerfile`'s rewrite of upstream's pinned `app-utils` dependency to
-  `master` — it is a deliberate patch of upstream's `package.json`, not leftover debugging,
-  and a bump can make it unnecessary or wrong.
+  The image installs with `npm ci` from upstream's `npm-shrinkwrap.json`, so the new tag's
+  shrinkwrap must still match its `package.json` — `npm ci` fails the build if it does not.
+  Upstream's `pnpm-lock.yaml` is stale and unused.
 
 - **Valkey** — no file edit; a fresh build resolves `valkey/valkey:alpine` to the current image. Only edit `startos/manifest/index.ts` if you need to pin to a specific tag instead of `alpine`.
