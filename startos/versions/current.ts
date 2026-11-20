@@ -1,18 +1,18 @@
 import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '3.5.1:18',
+  version: '3.5.1:19',
   releaseNotes: {
     en_US:
-      'With a Bitcoin too old to publish the RPC cookie Bitcoin Explorer reads, the explorer no longer fails to start: it waits and tells you to update Bitcoin.',
+      'While waiting for you to update Bitcoin, Bitcoin Explorer writes that to its logs once instead of repeating it every second.',
     es_ES:
-      'Con un Bitcoin demasiado antiguo para publicar la cookie RPC que Bitcoin Explorer lee, el explorador ya no falla al iniciarse: espera y le indica que actualice Bitcoin.',
+      'Mientras espera a que actualice Bitcoin, Bitcoin Explorer lo indica una sola vez en sus registros en lugar de repetirlo cada segundo.',
     de_DE:
-      'Mit einem Bitcoin, das zu alt ist, um das von Bitcoin Explorer gelesene RPC-Cookie bereitzustellen, startet der Explorer nicht mehr fehlerhaft: Er wartet und fordert Sie auf, Bitcoin zu aktualisieren.',
+      'Während Bitcoin Explorer darauf wartet, dass Sie Bitcoin aktualisieren, vermerkt er das einmal in seinen Protokollen, statt es jede Sekunde zu wiederholen.',
     pl_PL:
-      'Gdy Bitcoin jest zbyt stary, by udostępniać plik cookie RPC odczytywany przez Bitcoin Explorer, eksplorator nie kończy już uruchamiania błędem: czeka i prosi o aktualizację Bitcoina.',
+      'Czekając na aktualizację Bitcoina, Bitcoin Explorer zapisuje to w logach raz, zamiast powtarzać co sekundę.',
     fr_FR:
-      "Avec un Bitcoin trop ancien pour publier le cookie RPC que Bitcoin Explorer lit, l'explorateur n'échoue plus au démarrage : il attend et vous invite à mettre Bitcoin à jour.",
+      "En attendant que vous mettiez Bitcoin à jour, Bitcoin Explorer l'indique une seule fois dans ses journaux au lieu de le répéter chaque seconde.",
   },
   migrations: {
     up: async () => {},
