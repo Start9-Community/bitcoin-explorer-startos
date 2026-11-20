@@ -1,5 +1,9 @@
 import { manifest as bitcoinManifest } from 'bitcoin-core-startos/startos/manifest'
-import { rpcHostId, rpcPort } from 'bitcoin-core-startos/startos/utils'
+import {
+  rpcHostId,
+  rpcPort,
+  rpcVolumeId,
+} from 'bitcoin-core-startos/startos/utils'
 import { sdk } from './sdk'
 import { i18n } from './i18n'
 import { btcPath, redisUrl, uiPort } from './fileModels/_env'
@@ -60,7 +64,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       })
       .mountDependency<typeof bitcoinManifest>({
         dependencyId: 'bitcoind',
-        volumeId: 'main',
+        volumeId: rpcVolumeId,
         subpath: null,
         mountpoint: btcPath,
         readonly: true,

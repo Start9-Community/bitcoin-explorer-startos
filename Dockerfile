@@ -2,11 +2,9 @@ FROM node:24-slim AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /workspace
 RUN apt update && \
-  apt install -y --no-install-recommends git ca-certificates && \
-  npm install -g pnpm
+  apt install -y --no-install-recommends git ca-certificates
 COPY explorer .
-RUN sed -i 's|github:janoside/app-utils#ba4c23d3f|github:janoside/app-utils#master|' package.json
-RUN pnpm install --ignore-scripts
+RUN npm ci --ignore-scripts
 
 FROM node:24-alpine
 WORKDIR /workspace
