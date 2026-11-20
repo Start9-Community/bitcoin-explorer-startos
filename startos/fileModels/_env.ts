@@ -3,7 +3,7 @@ import { rpcCookieName } from 'bitcoin-core-startos/startos/utils'
 import { sdk } from '../sdk'
 
 const btcPath = '/btcd'
-const cookiePath = `${btcPath}/${rpcCookieName}`
+export const cookiePath = `${btcPath}/${rpcCookieName}`
 
 export { btcPath }
 

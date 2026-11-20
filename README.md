@@ -91,7 +91,7 @@ One, and it is required.
 | ---------- | -------- | ---------------------- | ------------------------------ | ------------------------------- |
 | Bitcoin    | Yes      | `bitcoind`             | `public`, read-only at `/btcd` | Every piece of data it displays |
 
-Authentication is by **cookie**, read from the `public` volume Bitcoin publishes for its dependents (the cookie, never its data directory), so there is no credential to configure and none to rotate. The dependency is `kind: 'running'` with the `bitcoind` health check, so StartOS shows it unmet until Bitcoin is up and healthy.
+Authentication is by **cookie**, read from the `public` volume Bitcoin publishes for its dependents (the cookie, never its data directory), so there is no credential to configure and none to rotate. The explorer waits for a nonempty cookie before starting: upstream only watches for cookie changes when the file exists at startup. The dependency is `kind: 'running'` with the `bitcoind` health check, so StartOS shows it unmet until Bitcoin is up and healthy.
 
 Refer to the dependency as **Bitcoin**: either Bitcoin Core or Bitcoin Knots satisfies it.
 

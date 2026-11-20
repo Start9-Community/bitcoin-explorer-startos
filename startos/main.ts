@@ -6,7 +6,7 @@ import {
 } from 'bitcoin-core-startos/startos/utils'
 import { sdk } from './sdk'
 import { i18n } from './i18n'
-import { btcPath, redisUrl, uiPort } from './fileModels/_env'
+import { btcPath, cookiePath, redisUrl, uiPort } from './fileModels/_env'
 import { envFile } from './fileModels/_env'
 import { ExecCommandOptions } from '@start9labs/start-sdk/lib/mainFn/Daemons'
 
@@ -75,7 +75,14 @@ export const main = sdk.setupMain(async ({ effects }) => {
   const primaryDaemonOptions = {
     subcontainer: explorer,
     exec: {
-      command: ['npm', 'start'],
+      // Upstream skips cookie watching when the cookie is absent at startup.
+      command: [
+        'sh',
+        '-c',
+        'until [ -s "$1" ]; do sleep 1; done; exec npm start',
+        'sh',
+        cookiePath,
+      ],
     } as ExecCommandOptions,
     cwd: workdir,
     ready: {
