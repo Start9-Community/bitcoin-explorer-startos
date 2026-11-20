@@ -13,6 +13,25 @@ import { ExecCommandOptions } from '@start9labs/start-sdk/lib/mainFn/Daemons'
 export const main = sdk.setupMain(async ({ effects }) => {
   console.info(i18n('Starting Bitcoin Explorer'))
 
+  // An older Bitcoin lacks the public volume, and mounting a missing volume fails the start.
+  const hasRpcVolume = await sdk
+    .getServiceManifest(effects, 'bitcoind', (m) =>
+      m?.volumes.includes(rpcVolumeId),
+    )
+    .const()
+  if (hasRpcVolume === false) {
+    return sdk.Daemons.of(effects).addHealthCheck('bitcoin', {
+      ready: {
+        display: i18n('Bitcoin Connection'),
+        fn: () => ({
+          result: 'failure',
+          message: i18n('Update Bitcoin so Bitcoin Explorer can connect to it'),
+        }),
+      },
+      requires: [],
+    })
+  }
+
   const workdir = '/workspace'
 
   const env = await envFile.read().const(effects)
