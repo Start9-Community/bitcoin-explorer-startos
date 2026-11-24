@@ -1,18 +1,18 @@
 import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '3.5.1:19',
+  version: '3.5.1:20',
   releaseNotes: {
     en_US:
-      'While waiting for you to update Bitcoin, Bitcoin Explorer writes that to its logs once instead of repeating it every second.',
+      'The bundled Valkey cache accepts connections from Bitcoin Explorer alone.',
     es_ES:
-      'Mientras espera a que actualice Bitcoin, Bitcoin Explorer lo indica una sola vez en sus registros en lugar de repetirlo cada segundo.',
+      'La caché Valkey incluida solo acepta conexiones de Bitcoin Explorer.',
     de_DE:
-      'Während Bitcoin Explorer darauf wartet, dass Sie Bitcoin aktualisieren, vermerkt er das einmal in seinen Protokollen, statt es jede Sekunde zu wiederholen.',
+      'Der mitgelieferte Valkey-Cache nimmt nur Verbindungen von Bitcoin Explorer an.',
     pl_PL:
-      'Czekając na aktualizację Bitcoina, Bitcoin Explorer zapisuje to w logach raz, zamiast powtarzać co sekundę.',
+      'Dołączona pamięć podręczna Valkey przyjmuje połączenia wyłącznie od Bitcoin Explorer.',
     fr_FR:
-      "En attendant que vous mettiez Bitcoin à jour, Bitcoin Explorer l'indique une seule fois dans ses journaux au lieu de le répéter chaque seconde.",
+      "Le cache Valkey intégré n'accepte les connexions que de Bitcoin Explorer.",
   },
   migrations: {
     up: async () => {},

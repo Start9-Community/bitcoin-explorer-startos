@@ -12,11 +12,12 @@ This package has two upstream sources: BTC RPC Explorer (vendored as a git submo
 
   Pin lives in the `explorer/` git submodule (commit SHA in the parent repo's tree; corresponds to a tag like `v3.5.1`). `.gitmodules` points at `https://github.com/janoside/btc-rpc-explorer.git`.
 
-- **Valkey** ([valkey/valkey on Docker Hub](https://hub.docker.com/r/valkey/valkey)) — the package tracks the `alpine` floating tag, so there is no version to bump; to confirm what's currently published:
+- **Valkey** ([valkey/valkey on Docker Hub](https://hub.docker.com/r/valkey/valkey)) — newest exact `9.<minor>.<patch>-alpine` tag:
   ```bash
-  curl -fsSL "https://hub.docker.com/v2/repositories/valkey/valkey/tags?page_size=20&ordering=last_updated" | jq -r '.results[].name'
+  curl -fsSL "https://hub.docker.com/v2/repositories/valkey/valkey/tags?page_size=50&name=9.&ordering=last_updated" \
+    | jq -r '.results[].name' | grep -E '^9\.[0-9]+\.[0-9]+-alpine$' | head
   ```
-  Pin lives in `startos/manifest/index.ts` as `images.valkey.source.dockerTag: 'valkey/valkey:alpine'`. No file change is needed when Valkey publishes a new image — rebuilding the package pulls the latest `alpine` tag.
+  Pin lives in `startos/manifest/index.ts` as `images.valkey.source.dockerTag`.
 
 ## Applying the bump
 
@@ -31,4 +32,4 @@ This package has two upstream sources: BTC RPC Explorer (vendored as a git submo
   shrinkwrap must still match its `package.json` — `npm ci` fails the build if it does not.
   Upstream's `pnpm-lock.yaml` is stale and unused.
 
-- **Valkey** — no file edit; a fresh build resolves `valkey/valkey:alpine` to the current image. Only edit `startos/manifest/index.ts` if you need to pin to a specific tag instead of `alpine`.
+- **Valkey** — set `images.valkey.source.dockerTag` in `startos/manifest/index.ts` to `valkey/valkey:<tag>`.
