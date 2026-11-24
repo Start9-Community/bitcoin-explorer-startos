@@ -130,7 +130,16 @@ export const main = sdk.setupMain(async ({ effects }) => {
     return sdk.Daemons.of(effects)
       .addDaemon('valkey', {
         subcontainer: valkey,
-        exec: { command: 'valkey-server' },
+        exec: {
+          command: [
+            'valkey-server',
+            '--bind',
+            '127.0.0.1',
+            '-::1',
+            '--protected-mode',
+            'yes',
+          ],
+        },
         ready: {
           display: null,
           fn: async () => {
